@@ -1,3 +1,7 @@
+```shell
+forge test --match-path ./test/EGD-Finance.exp.sol -vvv
+```
+
 ## Foundry
 
 **Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
