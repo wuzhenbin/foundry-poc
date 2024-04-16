@@ -1,5 +1,6 @@
 ```shell
 forge test --match-path ./test/EGD-Finance.exp.sol -vvv
+forge test --match-path ./test/SumerMoney.exp.sol -vvv
 ```
 
 ## Foundry

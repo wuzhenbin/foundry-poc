@@ -6,6 +6,6 @@ libs = ["lib"]
 [rpc_endpoints]
 mainnet = "${RPC_MAINNET}"
 bsc = "${RPC_BSC}"
-
+base = "${RPC_BASE}"
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
