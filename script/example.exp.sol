@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.17;
 
-import "forge-std/Script.sol";
+import "forge-std/Test.sol";
 
-contract exploitTest is Script {
+contract MarksTest is Test {
     function setUp() public {
         vm.createSelectFork("Base", 13_076_768);
     }

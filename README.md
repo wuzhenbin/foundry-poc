@@ -1,6 +1,11 @@
 ```shell
-forge test --match-path ./test/EGD-Finance.exp.sol -vvv
-forge test --match-path ./test/SumerMoney.exp.sol -vvv
+forge test --match-path ./test/EgdFinance/exploit.sol -vvv
+
+forge test --match-path ./test/SumerMoney/exploit.sol -vvv
+forge test --match-path ./test/SumerMoney/exploit-v2.sol -vvv
+forge test --match-path ./test/SumerMoney/interact.sol -vvv
+
+forge test --match-path ./test/Mars/exploit.sol -vvv
 ```
 
 ## Foundry
