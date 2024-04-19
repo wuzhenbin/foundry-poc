@@ -6,7 +6,9 @@ forge test --match-path ./test/SumerMoney/exploit-v2.sol -vvv
 forge test --match-path ./test/SumerMoney/interact.sol -vvv
 
 forge test --match-path ./test/Mars/exploit.sol -vvv
+forge test --match-path ./test/Mars/exploit-v3.sol -vvv
 forge test --match-path ./test/Mars/interact.sol -vvv
+forge test --match-path ./test/Mars/mock.sol -vvv
 ```
 
 ## Foundry
