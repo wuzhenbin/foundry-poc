@@ -12,7 +12,11 @@ forge test --match-path ./test/Mars/mock.sol -vvv
 
 forge test --match-path ./test/Satx/exploit.sol -vvv
 forge test --match-path ./test/Satx/exploit-v2.sol -vvv
+forge test --match-path ./test/Satx/exploit-v3.sol -vvv
 forge test --match-path ./test/Satx/interact.sol -vvv
+
+forge test --match-path ./test/Chainge/exploit.sol -vvv
+forge test --match-path ./test/Chainge/interact.sol -vvv
 ```
 
 ## Foundry
