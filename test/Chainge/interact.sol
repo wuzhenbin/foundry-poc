@@ -11,6 +11,7 @@ import "./IMinterProxyV2.sol";
 IMinterProxyV2 constant minterProxy = IMinterProxyV2(
     payable(0x80a0D7A6FD2A22982Ce282933b384568E5c852bF)
 );
+IERC20 constant Victim = IERC20(0x8A4AA176007196D48d39C89402d3753c39AE64c1);
 
 address constant BUSDT = 0x55d398326f99059fF775485246999027B3197955;
 address constant BabyDoge = 0xc748673057861a797275CD8A068AbB95A902e8de;
@@ -23,11 +24,6 @@ address constant IOTX = 0x9678E42ceBEb63F23197D726B29b1CB20d0064E5;
 address constant OneInch = 0x111111111117dC0aa78b770fA6A738034120C302;
 
 contract AbiDecode {
-    struct MyStruct {
-        string name;
-        uint[2] nums;
-    }
-
     function encode(
         address from,
         address to,
@@ -47,11 +43,31 @@ contract ChaingeTest is Test {
     AbiDecode testDecode;
 
     function setUp() public {
-        // vm.createSelectFork("bsc");
+        // vm.createSelectFork("bsc", 37_880_388 - 1);
+        vm.createSelectFork("bsc");
         testDecode = new AbiDecode();
     }
 
-    function testFunction() public view {
+    function testAllows() public {
+        address token = 0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d;
+
+        emit log_named_decimal_uint(
+            "token allowance",
+            IERC20(token).allowance(
+                0x440872cfDDaC749D9F201234395fC20ed5480A80,
+                address(minterProxy)
+            ),
+            IERC20(token).decimals()
+        );
+
+        emit log_named_decimal_uint(
+            "token Balance",
+            IERC20(token).balanceOf(0x440872cfDDaC749D9F201234395fC20ed5480A80),
+            IERC20(token).decimals()
+        );
+    }
+
+    function encodeFunction() public view {
         // bytes memory encode = testDecode.encode(BUSDT, address(this), 1);
         // console.logBytes(encode);
 

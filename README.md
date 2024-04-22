@@ -17,6 +17,9 @@ forge test --match-path ./test/Satx/interact.sol -vvv
 
 forge test --match-path ./test/Chainge/exploit.sol -vvv
 forge test --match-path ./test/Chainge/interact.sol -vvv
+
+forge test --match-path ./test/HedgeyFinance/exploit.sol -vvv
+forge test --match-path ./test/HedgeyFinance/exploit-v2.sol -vvv
 ```
 
 ## Foundry
