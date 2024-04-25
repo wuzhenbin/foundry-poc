@@ -1,4 +1,6 @@
 ```shell
+forge test --match-path ./test/Mock.sol  -vvv
+
 forge test --match-path ./test/EgdFinance/Exploit.sol -vvv
 
 forge test --match-path ./test/SumerMoney/Exploit.sol -vvv
@@ -22,7 +24,14 @@ forge test --match-path ./test/HedgeyFinance/Exploit.sol -vvv
 forge test --match-path ./test/HedgeyFinance/ExploitV2.sol -vvv
 forge test --match-path ./test/HedgeyFinance/Interact.sol -vvv
 
+forge test --match-path ./test/Fil314/ExploitV1.sol -vvv
 forge test --match-path ./test/Fil314/ExploitV2.sol -vvv
+
+# --evm-version 'cancun' or
+# set evm_version = 'cancun'
+forge test --match-path ./test/Grokd/Exploit.sol  -vvv
+
+forge test --match-path ./test/Yield/Exploit.sol  -vvv
 ```
 
 ## Foundry
