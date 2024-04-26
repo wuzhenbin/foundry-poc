@@ -32,6 +32,7 @@ forge test --match-path ./test/Fil314/ExploitV2.sol -vvv
 forge test --match-path ./test/Grokd/Exploit.sol  -vvv
 
 forge test --match-path ./test/Yield/Exploit.sol  -vvv
+forge test --match-path ./test/Z123/Exploit.sol  -vvv
 ```
 
 ## Foundry
