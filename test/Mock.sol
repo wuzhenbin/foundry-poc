@@ -30,7 +30,7 @@ contract MockTest is Test {
     }
 
     function testDecode() public view {
-        // bytes memory encode = testDecode.encode(BUSDT, address(this), 1);
+        // bytes memory encode = testDecode.encode(USDT, address(this), 1);
         // console.logBytes(encode);
 
         // (address from, address to, uint256 value) = testDecode.decode(

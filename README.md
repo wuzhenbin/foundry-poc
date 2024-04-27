@@ -1,7 +1,7 @@
 ```shell
 forge test --match-path ./test/Mock.sol  -vvv
 
-forge test --match-path ./test/EgdFinance/Exploit.sol -vvv
+
 
 forge test --match-path ./test/SumerMoney/Exploit.sol -vvv
 forge test --match-path ./test/SumerMoney/ExploitV2.sol -vvv
@@ -32,7 +32,14 @@ forge test --match-path ./test/Fil314/ExploitV2.sol -vvv
 forge test --match-path ./test/Grokd/Exploit.sol  -vvv
 
 forge test --match-path ./test/Yield/Exploit.sol  -vvv
-forge test --match-path ./test/Z123/Exploit.sol  -vvv
+
+forge test --match-path ./test/Z123/ExploitV1.sol  -vvv
+forge test --match-path ./test/Z123/Interact.sol  -vvv
+
+# --evm-version 'cancun'
+forge test --match-path ./test/Ngfs/Exploit.sol  -vvv
+
+forge test --match-path ./test/EgdFinance/Exploit.sol -vvv
 ```
 
 ## Foundry

@@ -13,7 +13,7 @@ IMinterProxyV2 constant minterProxy = IMinterProxyV2(
 );
 IERC20 constant Victim = IERC20(0x8A4AA176007196D48d39C89402d3753c39AE64c1);
 
-address constant BUSDT = 0x55d398326f99059fF775485246999027B3197955;
+address constant USDT = 0x55d398326f99059fF775485246999027B3197955;
 address constant BabyDoge = 0xc748673057861a797275CD8A068AbB95A902e8de;
 address constant SolToken = 0x570A5D26f7765Ecb712C0924E4De545B89fD43dF;
 address constant AvaxToken = 0x1CE0c2827e2eF14D5C4f29a091d735A204794041;
@@ -68,7 +68,7 @@ contract ChaingeTest is Test {
     }
 
     function encodeFunction() public view {
-        // bytes memory encode = testDecode.encode(BUSDT, address(this), 1);
+        // bytes memory encode = testDecode.encode(USDT, address(this), 1);
         // console.logBytes(encode);
 
         // (address from, address to, uint256 value) = testDecode.decode(
