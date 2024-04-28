@@ -4,12 +4,6 @@ pragma solidity ^0.8.17;
 import "forge-std/Test.sol";
 
 contract SomeHack {
-    address admin;
-
-    constructor() payable {
-        admin = msg.sender;
-    }
-
     function fuckyou() public {}
 }
 

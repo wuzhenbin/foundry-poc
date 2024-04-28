@@ -38,6 +38,10 @@ forge test --match-path ./test/Z123/Interact.sol  -vvv
 
 # --evm-version 'cancun'
 forge test --match-path ./test/Ngfs/Exploit.sol  -vvv
+forge test --match-path ./test/Ngfs/Interact.sol  -vvv
+
+forge test --match-path ./test/Ups/ExploitV1.sol  -vvv
+forge test --match-path ./test/Ups/ExploitV2.sol  -vvv
 
 forge test --match-path ./test/EgdFinance/Exploit.sol -vvv
 ```
