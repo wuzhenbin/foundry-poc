@@ -12,6 +12,10 @@ contract someTest is Test {
         vm.createSelectFork("bsc", 13_076_768);
     }
 
+    function print(string memory _txt, uint256 value, uint256 decimal) public {
+        emit log_named_decimal_uint(_txt, value, decimal);
+    }
+
     function testExploit() public {
         SomeHack hacker = new SomeHack();
         hacker.fuckyou();

