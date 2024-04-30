@@ -46,6 +46,9 @@ forge test --match-path ./test/Ups/Interact.sol  -vvv
 
 forge test --match-path ./test/XBridge/Exploit.sol  -vvv
 
+forge test --match-path ./test/Squid/ExploitV1.sol  -vvv
+forge test --match-path ./test/Squid/ExploitV2.sol  -vvv
+forge test --match-path ./test/Squid/Interact.sol  -vvv
 
 forge test --match-path ./test/EgdFinance/Exploit.sol -vvv
 ```
