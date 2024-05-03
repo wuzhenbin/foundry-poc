@@ -31,7 +31,7 @@ forge test --match-path ./test/Fil314/ExploitV2.sol -vvv
 # set evm_version = 'cancun'
 forge test --match-path ./test/Grokd/Exploit.sol  -vvv
 
-forge test --match-path ./test/Yield/Exploit.sol  -vvv
+forge test --match-path ./test/Yiedl/Exploit.sol  -vvv
 
 forge test --match-path ./test/Z123/ExploitV1.sol  -vvv
 forge test --match-path ./test/Z123/Interact.sol  -vvv
@@ -53,6 +53,9 @@ forge test --match-path ./test/Squid/Interact.sol  -vvv
 forge test --match-path ./test/Squid/Interact.sol  -vvv
 
 forge test --match-path ./test/Wsm/Exploit.sol -vvv
+forge test --match-path ./test/Wsm/Interact.sol -vvv
+
+forge test --match-path ./test/Yield/ExploitV1.sol -vvv
 ```
 
 ## Foundry
