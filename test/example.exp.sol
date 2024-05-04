@@ -21,3 +21,15 @@ contract someTest is Test {
         hacker.fuckyou();
     }
 }
+
+contract some2Test is Test {
+    function setUp() public {
+        vm.createSelectFork("bsc", 13_076_768);
+    }
+
+    function print(string memory _txt, uint256 value, uint256 decimal) public {
+        emit log_named_decimal_uint(_txt, value, decimal);
+    }
+
+    function testExploit() public {}
+}
