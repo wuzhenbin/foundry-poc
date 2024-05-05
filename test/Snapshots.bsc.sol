@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.17;
 
+import "forge-std/Test.sol";
+
 import "@interface/IERC20.sol";
 import "@interface/IWBNB.sol";
 import "@interface/IPancakeV2.sol";
@@ -24,3 +26,23 @@ IPancakeFactoryV2 constant PancakeFactoryV2 = IPancakeFactoryV2(
 );
 address constant PANCAKE_V3_FACTORY = 0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865;
 bytes32 constant PancakeV3_POOL_INIT_CODE_HASH = 0x6ce8eb472fa82df5469c6ab6d485f17c3ad13c8cd7af59b3d4a8026c5ce0f7e2;
+
+contract MockTest is Test {
+    function token2token(
+        address token1,
+        address token2,
+        uint256 amount
+    ) internal {
+        address[] memory path = new address[](2);
+        path[0] = address(token1);
+        path[1] = address(token2);
+
+        PancakeV2Router.swapExactTokensForTokensSupportingFeeOnTransferTokens(
+            amount,
+            0,
+            path,
+            address(this),
+            block.timestamp
+        );
+    }
+}
