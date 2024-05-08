@@ -27,25 +27,26 @@ IERC20 constant USDT = IERC20(0x55d398326f99059fF775485246999027B3197955);
 IZzf constant Zzf = IZzf(payable(0xB7a254237E05cccA0a756f75FB78Ab2Df222911b));
 
 contract ZongZiTest is Test {
-    address constant attackContract =
-        0x0bd0D9BA4f52dB225B265c3Cffa7bc4a418D22A9;
-
     function setUp() public {
-        vm.createSelectFork("bsc", 37272888 - 1);
+        vm.createSelectFork(
+            "bsc",
+            hex"247f4b3dbde9d8ab95c9766588d80f8dae835129225775ebd05a6dd2c69cd79f"
+        );
+
+        deal(address(BNB), address(this), 1904.347826086956521739 ether);
+        deal(address(this), 0);
     }
 
     function print(string memory _txt, uint256 value, uint256 decimal) public {
         emit log_named_decimal_uint(_txt, value, decimal);
     }
 
-    function testExploit() public view {
-        uint256 multiplier = uint256(
-            vm.load(attackContract, bytes32(uint256(9)))
-        );
-        uint256 pairWBNBBalance = BNB.balanceOf(address(BNB_ZongZi_Pool));
-        console.log(multiplier);
-        uint256 amount1Out = (pairWBNBBalance * multiplier) /
-            ((pairWBNBBalance * 100) / address(ZongZi).balance);
-        console.log(amount1Out);
+    function testExploit() public {
+        uint256 WBNBBalance = BNB.balanceOf(address(this));
+        uint256 BNBBalance = address(this).balance;
+        print("WBNBBalance", WBNBBalance, 18);
+        print("BNBBalance", BNBBalance, 18);
     }
+
+    receive() external payable {}
 }

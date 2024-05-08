@@ -9,5 +9,6 @@ mainnet = "${RPC_MAINNET}"
 bsc = "${RPC_BSC}"
 base = "${RPC_BASE}"
 arb_one = "${RPC_ARB_ONE}"
+blast = "${RPC_BLAST}"
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

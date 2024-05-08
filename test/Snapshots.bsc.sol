@@ -28,6 +28,10 @@ address constant PANCAKE_V3_FACTORY = 0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865
 bytes32 constant PancakeV3_POOL_INIT_CODE_HASH = 0x6ce8eb472fa82df5469c6ab6d485f17c3ad13c8cd7af59b3d4a8026c5ce0f7e2;
 
 contract MockTest is Test {
+    function print(string memory _txt, uint256 value, uint256 decimal) public {
+        emit log_named_decimal_uint(_txt, value, decimal);
+    }
+
     function token2token(
         address token1,
         address token2,
