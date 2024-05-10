@@ -26,8 +26,7 @@ IPancakePairV2 constant USDT_BNB_V2_Pool = IPancakePairV2(
 );
 // pancakeswap v3
 address constant PANCAKE_V3_FACTORY = 0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865;
-// USDT_USDC
-IPancakePairV3 constant USDT_USDC_Pool = IPancakePairV3(
+IPancakePairV3 constant USDT_BNB_Pool = IPancakePairV3(
     0x36696169C63e42cd08ce11f5deeBbCeBae652050
 );
 bytes32 constant PancakeV3_POOL_INIT_CODE_HASH = 0x6ce8eb472fa82df5469c6ab6d485f17c3ad13c8cd7af59b3d4a8026c5ce0f7e2;
