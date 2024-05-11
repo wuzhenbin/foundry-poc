@@ -13,6 +13,7 @@ WBNB constant BNB = WBNB(0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c);
 IERC20 constant USDT = IERC20(0x55d398326f99059fF775485246999027B3197955);
 IERC20 constant BUSD = IERC20(0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56);
 IERC20 constant USDC = IERC20(0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d);
+IERC20 constant BTC = IERC20(0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c);
 
 // pancakeswap v2
 IPancakeRouterV2 constant PancakeV2Router = IPancakeRouterV2(
@@ -23,6 +24,9 @@ IPancakeFactoryV2 constant PancakeFactoryV2 = IPancakeFactoryV2(
 );
 IPancakePairV2 constant USDT_BNB_V2_Pool = IPancakePairV2(
     0x16b9a82891338f9bA80E2D6970FddA79D1eb0daE
+);
+IPancakePairV3 constant USDT_BTC_Pool = IPancakePairV3(
+    0x46Cf1cF8c69595804ba91dFdd8d6b960c9B0a7C4
 );
 // pancakeswap v3
 address constant PANCAKE_V3_FACTORY = 0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865;
