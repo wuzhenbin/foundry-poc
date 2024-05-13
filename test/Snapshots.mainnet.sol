@@ -2,7 +2,6 @@
 pragma solidity ^0.8.17;
 
 import "@interface/IERC20.sol";
-
 import "@interface/IWETH9.sol";
 import "@interface/IUniswapV2.sol";
 import "@interface/IUniswapV3.sol";
@@ -18,5 +17,8 @@ IUniswapV2Factory constant UNISWAP_V2_FACTORY = IUniswapV2Factory(
 );
 IUniswapV2Router constant UNISWAP_V2_ROUTER = IUniswapV2Router(
     0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D
+);
+IUniswapV3Pool constant Pool = IUniswapV3Pool(
+    0x36696169C63e42cd08ce11f5deeBbCeBae652050
 );
 bytes32 constant UniswapV3_POOL_INIT_CODE_HASH = 0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54;
