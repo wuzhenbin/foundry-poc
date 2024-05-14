@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.17;
 
+import "forge-std/Test.sol";
+
 import "@interface/IERC20.sol";
 import "@interface/IWETH9.sol";
 import "@interface/IUniswapV2.sol";
@@ -22,3 +24,23 @@ IUniswapV3Pool constant Pool = IUniswapV3Pool(
     0x36696169C63e42cd08ce11f5deeBbCeBae652050
 );
 bytes32 constant UniswapV3_POOL_INIT_CODE_HASH = 0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54;
+
+contract MockTest is Test {
+    function token2token(
+        address token1,
+        address token2,
+        uint256 amount
+    ) internal {
+        address[] memory path = new address[](2);
+        path[0] = address(token1);
+        path[1] = address(token2);
+
+        UNISWAP_V2_ROUTER.swapExactTokensForTokensSupportingFeeOnTransferTokens(
+                amount,
+                0,
+                path,
+                address(this),
+                block.timestamp
+            );
+    }
+}

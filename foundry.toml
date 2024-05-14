@@ -11,5 +11,6 @@ base = "${RPC_BASE}"
 arb_one = "${RPC_ARB_ONE}"
 blast = "${RPC_BLAST}"
 optimism = "${RPC_OPTIMISM}"
+polygon = "${RPC_POLYGON}"
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
