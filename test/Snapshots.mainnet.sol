@@ -23,6 +23,9 @@ IUniswapV2Router constant UNISWAP_V2_ROUTER = IUniswapV2Router(
 IUniswapV3Pool constant Pool = IUniswapV3Pool(
     0x36696169C63e42cd08ce11f5deeBbCeBae652050
 );
+IUniswapV3Router constant UniV3Router = IUniswapV3Router(
+    payable(0xE592427A0AEce92De3Edee1F18E0157C05861564)
+);
 bytes32 constant UniswapV3_POOL_INIT_CODE_HASH = 0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54;
 
 contract MockTest is Test {
