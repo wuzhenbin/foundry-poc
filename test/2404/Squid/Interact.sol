@@ -10,10 +10,11 @@ import "@interface/IERC20.sol";
 
 import "./ISquidTokenSwap.sol";
 
+IWBNB constant WBNB = IWBNB(0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c);
+
 contract SquidTest is Test {
     // USDT_WBNB
     IERC20 USDT = IERC20(0x55d398326f99059fF775485246999027B3197955);
-    WBNB BNB = WBNB(0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c);
     IPancakeRouterV2 PANCAKE_V2_ROUTER =
         IPancakeRouterV2(payable(0x10ED43C718714eb63d5aA57B78B54704E256024E));
     IERC20 SQUID_1 = IERC20(0x87230146E138d3F296a9a77e497A2A83012e9Bc5);
@@ -24,7 +25,7 @@ contract SquidTest is Test {
 
     function setUp() public {
         vm.createSelectFork("bsc", 37672970 - 1);
-        deal(address(BNB), address(this), 10000 ether);
+        deal(address(WBNB), address(this), 10000 ether);
     }
 
     function print(string memory _txt, uint256 value, uint256 decimal) public {
@@ -36,11 +37,11 @@ contract SquidTest is Test {
         SQUID_2.approve(address(PANCAKE_V2_ROUTER), type(uint256).max);
 
         // BNB -> SQUID_1
-        token2token(address(BNB), address(SQUID_1), 7000 ether);
+        token2token(address(WBNB), address(SQUID_1), 7000 ether);
         // SQUID_1 -> SQUID_2
         SquidTokenSwap.swapTokens(SQUID_1.balanceOf(address(this)));
         // BNB -> SQUID_2
-        token2token(address(BNB), address(SQUID_2), 3000 ether);
+        token2token(address(WBNB), address(SQUID_2), 3000 ether);
 
         uint256 i = 0;
         while (i < 8000) {
@@ -54,21 +55,21 @@ contract SquidTest is Test {
             // SQUID_2 -> BNB
             token2token(
                 address(SQUID_2),
-                address(BNB),
+                address(WBNB),
                 SQUID_2.balanceOf(address(this))
             );
 
             // BNB: 10102.373736207533918420
-            print("BNB", BNB.balanceOf(address(this)), 18);
+            print("BNB", WBNB.balanceOf(address(this)), 18);
 
             // BNB -> SQUID_1
-            token2token(address(BNB), address(SQUID_1), 7000 ether);
+            token2token(address(WBNB), address(SQUID_1), 7000 ether);
             // SQUID_1: 4080_0468.854864108363625807
 
             SquidTokenSwap.swapTokens(SQUID_1.balanceOf(address(this)));
 
             // BNB -> SQUID_2
-            token2token(address(BNB), address(SQUID_2), 3000 ether);
+            token2token(address(WBNB), address(SQUID_2), 3000 ether);
 
             i = 0;
             while (i < 8000) {
@@ -82,7 +83,7 @@ contract SquidTest is Test {
         // SQUID_2 -> BNB
         token2token(
             address(SQUID_2),
-            address(BNB),
+            address(WBNB),
             SQUID_2.balanceOf(address(this))
         );
     }

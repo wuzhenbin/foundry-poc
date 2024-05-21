@@ -9,6 +9,7 @@ import "@interface/IPancakeV2.sol";
 import "@interface/IERC20.sol";
 
 IERC20 constant MARS = IERC20(0x436D3629888B50127EC4947D54Bb0aB1120962A0);
+IWBNB constant WBNB = IWBNB(0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c);
 
 contract TokenReceiver {
     constructor() payable {
@@ -20,8 +21,6 @@ contract MarksTest is Test {
     IPancakePairV3 pairPool =
         IPancakePairV3(0x36696169C63e42cd08ce11f5deeBbCeBae652050);
 
-    WBNB BNB = WBNB(0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c);
-
     IERC20 USDT = IERC20(0x55d398326f99059fF775485246999027B3197955);
 
     IPancakeRouterV2 pancakeRouterV2 =
@@ -32,15 +31,15 @@ contract MarksTest is Test {
 
     function setUp() public {
         vm.createSelectFork("bsc", 37_903_300 - 1);
-        deal(address(BNB), address(this), 10 ether);
+        deal(address(WBNB), address(this), 10 ether);
     }
 
     function testCantBuyMoreInAddress() public {
-        BNB.approve(address(pancakeRouterV2), type(uint256).max - 1);
+        WBNB.approve(address(pancakeRouterV2), type(uint256).max - 1);
         MARS.approve(address(pancakeRouterV2), type(uint256).max - 1);
 
         address[] memory path = new address[](2);
-        path[0] = address(BNB);
+        path[0] = address(WBNB);
         path[1] = address(MARS);
 
         uint256 tobuy = pancakeRouterV2.getAmountsIn(1000 ether, path)[0];
@@ -65,29 +64,29 @@ contract MarksTest is Test {
     }
 
     function testCanSellMore() public {
-        BNB.approve(address(pancakeRouterV2), type(uint256).max - 1);
+        WBNB.approve(address(pancakeRouterV2), type(uint256).max - 1);
         MARS.approve(address(pancakeRouterV2), type(uint256).max - 1);
 
         address[] memory path = new address[](2);
-        path[0] = address(BNB);
+        path[0] = address(WBNB);
         path[1] = address(MARS);
 
         for (uint256 i = 0; i < 10; i++) {
-            if (BNB.balanceOf(address(this)) == 0) {
+            if (WBNB.balanceOf(address(this)) == 0) {
                 break;
             }
 
             uint256 tobuy = pancakeRouterV2.getAmountsIn(1000 ether, path)[0];
-            if (BNB.balanceOf(address(this)) > tobuy) {
+            if (WBNB.balanceOf(address(this)) > tobuy) {
                 _buyToken(path, tobuy);
             } else {
-                _buyToken(path, BNB.balanceOf(address(this)));
+                _buyToken(path, WBNB.balanceOf(address(this)));
                 break;
             }
         }
 
         path[0] = address(MARS);
-        path[1] = address(BNB);
+        path[1] = address(WBNB);
 
         _saleToken(path, 1000 ether / 2);
         _saleToken(path, 1000 ether / 2);
@@ -96,19 +95,19 @@ contract MarksTest is Test {
     }
 
     function testMarsTotalSupply() public {
-        BNB.approve(address(pancakeRouterV2), type(uint256).max - 1);
+        WBNB.approve(address(pancakeRouterV2), type(uint256).max - 1);
         MARS.approve(address(pancakeRouterV2), type(uint256).max - 1);
 
         uint256 start = MARS.totalSupply();
 
         address[] memory path = new address[](2);
-        path[0] = address(BNB);
+        path[0] = address(WBNB);
         path[1] = address(MARS);
         uint256 tobuy = pancakeRouterV2.getAmountsIn(1000 ether, path)[0];
         _buyToken(path, tobuy);
 
         path[0] = address(MARS);
-        path[1] = address(BNB);
+        path[1] = address(WBNB);
         uint256 mbal = MARS.balanceOf(address(this));
         _saleToken(path, mbal);
 

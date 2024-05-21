@@ -9,11 +9,12 @@ import "@interface/IERC20.sol";
 
 import "./IPresaleBSCV5.sol";
 
+IWBNB constant WBNB = IWBNB(0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c);
+
 contract WsmTest is Test {
     IUniswapV3Pool WSM_BNB_Pool =
         IUniswapV3Pool(0x84F3cA9B7a1579fF74059Bd0e8929424D3FA330E);
     IERC20 WSM = IERC20(0x62694D43Ccb9B64e76e38385d15e325c7712A735);
-    WBNB BNB = WBNB(0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c);
     IUniswapV3Router swapRouter =
         IUniswapV3Router(payable(0x74Dca1Bd946b9472B2369E11bC0E5603126E4C18));
     IPresaleBSCV5 presaleBSCV5 =

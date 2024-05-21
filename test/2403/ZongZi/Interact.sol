@@ -22,7 +22,7 @@ IPancakePairV2 constant BNB_ZongZi_Pool = IPancakePairV2(
 IPancakePairV2 constant USDT_BNB_V2_Pool = IPancakePairV2(
     0x16b9a82891338f9bA80E2D6970FddA79D1eb0daE
 );
-WBNB constant BNB = WBNB(0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c);
+IWBNB constant WBNB = IWBNB(0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c);
 IERC20 constant USDT = IERC20(0x55d398326f99059fF775485246999027B3197955);
 IZzf constant Zzf = IZzf(payable(0xB7a254237E05cccA0a756f75FB78Ab2Df222911b));
 
@@ -33,7 +33,7 @@ contract ZongZiTest is Test {
             hex"247f4b3dbde9d8ab95c9766588d80f8dae835129225775ebd05a6dd2c69cd79f"
         );
 
-        deal(address(BNB), address(this), 1904.347826086956521739 ether);
+        deal(address(WBNB), address(this), 1904.347826086956521739 ether);
         deal(address(this), 0);
     }
 
@@ -42,7 +42,7 @@ contract ZongZiTest is Test {
     }
 
     function testExploit() public {
-        uint256 WBNBBalance = BNB.balanceOf(address(this));
+        uint256 WBNBBalance = WBNB.balanceOf(address(this));
         uint256 BNBBalance = address(this).balance;
         print("WBNBBalance", WBNBBalance, 18);
         print("BNBBalance", BNBBalance, 18);

@@ -9,7 +9,7 @@ import "@interface/IPancakeV2.sol";
 
 import "./ISatx.sol";
 
-WBNB constant BNB = WBNB(0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c);
+IWBNB constant WBNB = IWBNB(0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c);
 ISatx constant SATX = ISatx(
     payable(0xFd80a436dA2F4f4C42a5dBFA397064CfEB7D9508)
 );
@@ -30,7 +30,7 @@ contract SatxTest is Test {
     function setUp() public {
         vm.createSelectFork("bsc", 37_914_434 - 1);
 
-        deal(address(BNB), address(this), 0.9 ether);
+        deal(address(WBNB), address(this), 0.9 ether);
     }
 
     function showPrice() public {
@@ -45,7 +45,7 @@ contract SatxTest is Test {
         showPrice();
 
         SATX.approve(address(pancakeRouterV2), type(uint256).max);
-        BNB.approve(address(pancakeRouterV2), type(uint256).max);
+        WBNB.approve(address(pancakeRouterV2), type(uint256).max);
 
         uint256 satxAmount = SATX.balanceOf(address(BnbSatxPair));
         deal(address(SATX), address(this), satxAmount);
@@ -53,13 +53,13 @@ contract SatxTest is Test {
         SATX.transfer(address(BnbSatxPair), satxAmount / 2);
         BnbSatxPair.skim(address(this));
         BnbSatxPair.sync();
-        BNB.transfer(address(BnbSatxPair), 0.0001 ether);
+        WBNB.transfer(address(BnbSatxPair), 0.0001 ether);
 
         showPrice();
 
         address[] memory path = new address[](2);
         path[0] = address(SATX);
-        path[1] = address(BNB);
+        path[1] = address(WBNB);
         pancakeRouterV2.swapExactTokensForTokensSupportingFeeOnTransferTokens(
             SATX.balanceOf(address(this)),
             0,
@@ -68,6 +68,6 @@ contract SatxTest is Test {
             block.timestamp + 1
         );
 
-        emit log_named_decimal_uint("WBNB", BNB.balanceOf(address(this)), 18);
+        emit log_named_decimal_uint("WBNB", WBNB.balanceOf(address(this)), 18);
     }
 }
