@@ -26,7 +26,7 @@ contract MockTest is Test {
     AbiDecode abiDecode;
 
     function setUp() public {
-        abiDecode = new AbiDecode();
+        // abiDecode = new AbiDecode();
     }
 
     function testDecode() public view {}
